@@ -14,7 +14,7 @@ public class PR120ReadFile {
             while(sc.hasNextLine()){             //Mentre tingui alguna linea mes
                 lineCounter++;
                 String line = sc.nextLine();
-                System.out.println(line+Integer.toString(lineCounter));
+                System.out.println(Integer.toString(lineCounter)+"  "+line);
             }
         } catch (FileNotFoundException e){      //Si no troba el fitxer especificat
             e.printStackTrace();

@@ -4,15 +4,19 @@ import java.io.IOException;
 public class PR121Files {
     public static void main(String args[]){
         PR121Files ex = new PR121Files();
-        ex.crearCarpeta("myFiles");
-        ex.crearArxiuTxt("myFiles", "file1");
-        ex.crearArxiuTxt("myFiles", "file2");
+        ex.crearCarpeta("./myFiles");
+        ex.crearArxiuTxt("./myFiles", "file1");
+        ex.crearArxiuTxt("./myFiles", "file2");
+        ex.renombrarArxiu("./myFiles", "file2", "renamedFile");
+        System.out.println(ex.mostrarFitxers("./myFiles"));
+        ex.eliminarFitxer("./myFiles/file1.txt");
+        System.out.println(ex.mostrarFitxers("./myFiles"));
     }
 
 
       //Metodes
-    private void crearCarpeta(String name){
-        File dir = new File("./"+name);
+    private void crearCarpeta(String route){
+        File dir = new File(route);
           //Comproba la existencia del directori, i si no existeix ja el crea
         if(!dir.exists()) {
             if(dir.mkdirs()){
@@ -21,17 +25,46 @@ public class PR121Files {
         } else { System.out.println("Ja existeix el directori");}
     }
 
-    private void crearArxiuTxt(String dir, String name) {
-        File txt = new File("./"+dir+"/"+name+".txt");
-        try {
-            if (!txt.exists()) {                                     //Si el fitxer no existeix el crea
-                txt.mkdir();
-                System.out.println("Fitxer "+name+".txt creat.");
-            } else {System.out.println("Ja existeix el fitxer");}
+    private void crearArxiuTxt(String route, String fileName) {
+        File txt = new File(route+"/"+fileName+".txt");
+        if (!txt.exists()) {                                     //Si el fitxer no existeix el crea
+            if (txt.mkdir()){
+                System.out.println("Fitxer "+fileName+".txt creat.");
+            } else {System.out.println("Error al crear el fitxer"); System.exit(0);}
+        } else {System.out.println("Ja existeix el fitxer");}
 
-        } catch (IOException e) {                                    //Si dona un error del sistema s'acaba el programa
-            System.out.println("Error en la creació del fitxer "+name+".txt");
-            System.exit(0);
-        }
+    }
+
+    private void renombrarArxiu(String route, String fileName, String newFileName){
+        File fitxer = new File(route+"/"+fileName+".txt");
+        File newFitxer = new File(route+"/"+newFileName+".txt");
+        if (fitxer.exists()) {
+            if(fitxer.renameTo(newFitxer)){
+                System.out.println("Renombrat Correctament");
+            } else { System.out.println("Error al renombrar el fitxer"); System.exit(0);}
+        } else { System.out.println("No existeix aquest arxiu");}
+    }
+
+    private String mostrarFitxers(String route){
+        File folder = new File(route);
+        String fitxers = "Els arxius de la carpeta son: ";
+
+        if (folder.isDirectory()) {
+            File[] arxius = folder.listFiles();
+            if (arxius != null){
+                for(File arxiu : arxius){
+                    fitxers += arxiu.getName();
+                }
+            } else { fitxers += "No n'hi han";}
+            return fitxers;
+        } else {return "No existeix la carpeta especificada";}
+    }
+
+    private void eliminarFitxer(String route) {
+        File f = new File(route);
+        if (f.exists()) {
+            f.delete();
+            System.out.println("Fitxer eliminat");
+        } else { System.out.println("No existeix el fitxer"); }
     }
 }
