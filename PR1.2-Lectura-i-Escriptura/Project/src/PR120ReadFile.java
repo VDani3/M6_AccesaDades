@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class PR120ReadFile {
     public static void main(String args[]){
           //Variables
+        Scanner sc2 = new Scanner(System.in);
         File fitxer = new File("./PR120ReadFile.java");
         int lineCounter = 1;
 
@@ -19,5 +20,6 @@ public class PR120ReadFile {
         } catch (FileNotFoundException e){      //Si no troba el fitxer especificat
             e.printStackTrace();
         }
+        sc2.nextLine();
     }
 }

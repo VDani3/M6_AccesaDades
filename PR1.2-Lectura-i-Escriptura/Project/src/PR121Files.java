@@ -1,8 +1,10 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class PR121Files {
     public static void main(String args[]){
+        Scanner sc = new Scanner(System.in);
         PR121Files ex = new PR121Files();
         ex.crearCarpeta("./myFiles");
         ex.crearArxiuTxt("./myFiles", "file1");
@@ -11,6 +13,7 @@ public class PR121Files {
         System.out.println(ex.mostrarFitxers("./myFiles"));
         ex.eliminarFitxer("./myFiles/file1.txt");
         System.out.println(ex.mostrarFitxers("./myFiles"));
+        sc.nextLine();
     }
 
 
@@ -27,11 +30,15 @@ public class PR121Files {
 
     private void crearArxiuTxt(String route, String fileName) {
         File txt = new File(route+"/"+fileName+".txt");
+        try{
         if (!txt.exists()) {                                     //Si el fitxer no existeix el crea
-            if (txt.mkdir()){
+            if (txt.createNewFile()){
                 System.out.println("Fitxer "+fileName+".txt creat.");
             } else {System.out.println("Error al crear el fitxer"); System.exit(0);}
         } else {System.out.println("Ja existeix el fitxer");}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -53,7 +60,7 @@ public class PR121Files {
             File[] arxius = folder.listFiles();
             if (arxius != null){
                 for(File arxiu : arxius){
-                    fitxers += arxiu.getName();
+                    fitxers += arxiu.getName()+", ";
                 }
             } else { fitxers += "No n'hi han";}
             return fitxers;
