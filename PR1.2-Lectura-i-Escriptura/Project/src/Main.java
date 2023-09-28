@@ -17,7 +17,7 @@ public class Main {
       menu = menu + "\n 3) PR123sobreescriu";
       menu = menu + "\n 4) PR123append";
       menu = menu + "\n 5) PR124linies";
-      menu = menu + "\n 5) PR125cp";
+      menu = menu + "\n 6) PR125cp";
       menu = menu + "\n 100) Sortir";
       System.out.println(menu);
 

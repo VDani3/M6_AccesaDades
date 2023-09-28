@@ -33,7 +33,6 @@ public class PR125cp {
 
             while (fileRead.hasNextLine()) {
                 String linea = fileRead.nextLine();
-                System.out.println(linea);
                 fw.write(linea + "\n"); 
             }
 
