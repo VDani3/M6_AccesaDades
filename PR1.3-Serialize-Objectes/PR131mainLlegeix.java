@@ -14,7 +14,7 @@ public class PR131mainLlegeix {
 
             PR131hashmap persones = (PR131hashmap) data.readObject();
             for (Map.Entry<String, Integer> entry : persones.p.entrySet()) {
-                System.out.print(entry.getKey() + "   " + entry.getValue());
+                System.out.println(entry.getKey() + "   " + entry.getValue());
             }
             sc.nextLine();
         } catch (Exception e) {
