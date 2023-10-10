@@ -1,49 +1,65 @@
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.Random;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class PR14mainRegistreEstudiants {
-    
+    private static int numeroRegistroMaximo = 0;
     public static void main(String[] args) {
-        String menu = "Menu \n   1) Afegir nou estudiant \n   2) Actualitzar nota d'un estudiant \n   3) Consultar la nota d'un estudiant \n   4) Sortir \nOpcio: ";
+        String menu = "\n\n\nMenu \n   1) Afegir nou estudiant \n   2) Actualitzar nota d'un estudiant \n   3) Consultar la nota d'un estudiant \n   4) Sortir \nOpcio: ";
         PR14mainRegistreEstudiants ex = new PR14mainRegistreEstudiants();
         int opt = 0;
-        Scanner sc = new Scanner(System.in);  
-        String path = "./PR14registre";
+        Scanner sc = new Scanner(System.in);
+        String path = "./PR14registre.txt";
+        File f = new File(path);
+
+        if (f.exists()) {
+            f.delete();
+        }
 
         while (opt != 4) {
-            if (opt == 1){
+            if (sc.hasNextLine()) {
+                sc.nextLine(); // Descarta la entrada actual en el búfer
+            }
+            System.out.print(menu);
+            opt = sc.nextInt();
+            if (sc.hasNextLine()) {
+                sc.nextLine(); // Descarta la entrada actual en el búfer
+            }
+            if (opt == 1) {
                 try {
                     System.out.println("\n\n\nAfegiment d'estudiants");
-                      //Nou numero de registre
-                    int numRegistre = ex.getNumRegistre(path);
-                    if (numRegistre == 0){
+                    // Nou numero de registre
+                    int numRegistre = ex.getNumRegistre();
+                    if (numRegistre == 0) {
                         sc.nextLine();
                         continue;
                     }
-                      //Nom
+                    // Nom
                     System.out.print("   Nom de l'alumne: ");
                     String name = sc.nextLine();
                     name = ex.comprobarNom(name);
-                      //Nota
+                    // Nota
                     System.out.print("   Nota de l'alumne: ");
                     float note = sc.nextFloat();
                     note = ex.corregirNota(note);
-                      //Afegir estudiant
                     if (!ex.afegirEstudiant(numRegistre, name, note, path)) {
                         System.out.println("No s'ha pogut afegir");
                         sc.nextLine();
                         continue;
-                    };
-                    System.out.println(String.format("S'ha creat l'estudiant %s amb la nota %s i numero de registre %s", name, Float.toString(note), Integer.toString(numRegistre)));
+                    }
+                    System.out.println(String.format("S'ha creat l'estudiant %s amb la nota %.2f i numero de registre %d", name, note, numRegistre));
                     sc.nextLine();
-                } catch (Exception e) {e.printStackTrace();}
-            }
-            else if (opt == 2) {
-                try{ 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (opt == 2) {
+                try {
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Descarta la entrada actual en el búfer
+                    }
                     int numReg;
                     long posReg;
                     float nota;
@@ -51,6 +67,9 @@ public class PR14mainRegistreEstudiants {
                     System.out.println("\n\n\nActualitzar nota");
                     System.out.print("   Num del registre: ");
                     numReg = sc.nextInt();
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Descarta la entrada actual en el búfer
+                    }
                     posReg = ex.findRegistre(numReg, path);
 
                     if (posReg < 0) {
@@ -59,21 +78,24 @@ public class PR14mainRegistreEstudiants {
                         continue;
                     }
 
-                    System.out.println("   Nota nova: ");
+                    System.out.print("   Nota nova: ");
                     nota = sc.nextFloat();
-
                     if (!ex.modificarNota(posReg, nota, path)) {
                         System.out.println("No s'ha pogut modificar la nota");
                         sc.nextLine();
                         continue;
                     }
-                    System.out.println(String.format("La nota de l'alumne amb el numero registre %s ha sigut cambiada per %s", numReg, nota));
+                    System.out.println(String.format("La nota de l'alumne amb el numero registre %d ha sigut cambiada per %.2f", numReg, nota));
                     sc.nextLine();
-                } catch (Exception e) { e.printStackTrace(); }
-                
-            } 
-            else if (opt == 3) {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else if (opt == 3) {
                 try {
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Descarta la entrada actual en el búfer
+                    }
                     int numReg;
                     long posReg;
                     String alumneInfo;
@@ -81,122 +103,126 @@ public class PR14mainRegistreEstudiants {
                     System.out.println("\n\n\nVisualitzar alumne");
                     System.out.print("   Num del registre: ");
                     numReg = sc.nextInt();
-                    posReg = ex.findRegistre(numReg, path);
-                    if (posReg < 0) {
-                        System.out.println("No existeix el registre");
-                        sc.nextLine();
-                        continue;
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Descarta la entrada actual en el búfer
                     }
-                    alumneInfo = ex.getInfoEstudiant(posReg, path);
-                    if (alumneInfo == "") {
+                    alumneInfo = ex.getInfoEstudiant(numReg, path);
+                    if (alumneInfo.equals("")) {
                         System.out.println("No s'ha pogut llegir la info de l'alumne");
                         sc.nextLine();
                         continue;
                     }
-                } catch (Exception e) {e.printStackTrace();}
+                    System.out.println("Dades de l'estudiant:\n" + alumneInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-      //Getters
-    private int getNumRegistre(String p){
-        int res = 1;
-        long lenFile, lastIniPFile;
-        int lenReg = 28;
-        try (RandomAccessFile raf = new RandomAccessFile(p, "rw")){
-            lenFile = raf.length();
-            lastIniPFile = lenFile - lenReg;
-              //Si la posicio es negativa (es el primer registre)
-            if (lastIniPFile < 0) {
-                return 1;
-            }
-            raf.seek(lastIniPFile);
-            res += raf.readInt(); 
-            raf.close();
-            res = corregirNumReg(res);
-            return res;
-        } catch (Exception e) {System.out.println("El registre esta mal fet, elimina el document o arregla-ho"); return 0;}
+    // Getters
+    private int getNumRegistre() {
+        // Incrementa el número de registro máximo
+        numeroRegistroMaximo++;
+        return numeroRegistroMaximo;
     }
 
-    private String getInfoEstudiant(long pos, String p) {
-        String res = "";
+    private String getInfoEstudiant(int numReg, String p) {
         try (RandomAccessFile raf = new RandomAccessFile(p, "r")) {
-            raf.seek(pos);
-            res = raf.readUTF();
-        } catch (Exception e) {System.out.println("Error al agafar la info de l'estudiant");}
-        return res;
+            int numRegistro;
+            while (raf.getFilePointer() < raf.length()) {
+                numRegistro = raf.readInt();
+                if (numRegistro == numReg) {
+                    byte[] nombreBytes = new byte[20];
+                    raf.readFully(nombreBytes);
+                    String nom = new String(nombreBytes, StandardCharsets.UTF_8).trim();
+                    float nota = raf.readFloat();
+                    return String.format("  Nom de l'alumne: %s\n  Nota: %.2f", nom, nota);
+                } else {
+                    // Saltar el nombre y la nota del estudiante no coincidente
+                    raf.skipBytes(20);
+                    raf.skipBytes(4);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No s'ha trobat el fitxer");
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+        return "No s'ha trobat l'estudiant amb el número de registre " + numReg;
     }
+    
 
-
-      //Comprobaciones y correcciones
+    // Comprobaciones y correcciones
     private String comprobarNom(String n) {
         if (n.length() > 20) {
-            n = n.substring(0, 19);
-        } else if (n.length() < 20){
-            for (int i = 0; i > 20-n.length(); i++){
+            n = n.substring(0, 20);
+        } else if (n.length() < 20) {
+            for (int i = n.length(); i < 20; i++) {
                 n += " ";
             }
         }
         return n;
     }
 
-    private int corregirNumReg(int nR){
+    private int corregirNumReg(int nR) {
         nR = nR & 0xF;
         return nR;
     }
 
-    private float corregirNota(float n){
-        byte[] bytes = ByteBuffer.allocate(4).putFloat(n).array();
-        n = ByteBuffer.wrap(bytes).getFloat();
+    private float corregirNota(float n) {
         return n;
     }
 
-      //Acciones
-    private boolean afegirEstudiant(int numReg, String nom, float nota, String path){
-        //Escribir
-        try{
+    // Acciones
+    private boolean afegirEstudiant(int numReg, String nom, float nota, String path) {
+        try {
             RandomAccessFile raf = new RandomAccessFile(path, "rw");
             raf.seek(raf.length());
-            raf.write(numReg);
-            raf.writeBytes(nom);
+            raf.writeInt(numReg);
+            byte[] nombreBytes = nom.getBytes(StandardCharsets.UTF_8);
+            byte[] nombreFormateado = new byte[20];
+            System.arraycopy(nombreBytes, 0, nombreFormateado, 0, Math.min(nombreBytes.length, 20));
+            raf.write(nombreFormateado);
             raf.writeFloat(nota);
             raf.close();
             return true;
-        } catch ( Exception e){ e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
     private long findRegistre(int numR, String path) {
-        try (RandomAccessFile raf = new RandomAccessFile(path, "r")){
+        try (RandomAccessFile raf = new RandomAccessFile(path, "r")) {
             int numRegistro;
             while (raf.getFilePointer() < raf.length()) {
                 numRegistro = raf.readInt();
                 if (numRegistro == numR) {
                     return raf.getFilePointer();
                 }
-                raf.readUTF();
-                raf.readFloat();
+                raf.readFully(new byte[20]);
+                raf.skipBytes(4); // Saltar 4 bytes para la nota
             }
-            raf.close();
             System.out.println("No s'ha trobat el registre");
             return -1;
-        } catch (IOException e) { System.out.println("No s'ha trobat el ficher");
-        } catch (Exception e) {System.out.println("Error");}
+        } catch (IOException e) {
+            System.out.println("No s'ha trobat el fitxer");
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
         return -1;
     }
 
-    private boolean modificarNota(long pos, float n, String file){
+    private boolean modificarNota(long pos, float n, String file) {
         try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
-            raf.seek(pos);
-            raf.skipBytes(20);
+            raf.seek(pos + 20); // Saltar al campo de nota
             raf.writeFloat(n);
             raf.close();
             return true;
-        } catch (Exception e) {System.out.println("Error");}
-
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
         return false;
     }
-
-
-
 }

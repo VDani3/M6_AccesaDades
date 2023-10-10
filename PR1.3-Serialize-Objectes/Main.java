@@ -16,6 +16,7 @@ public class Main {
       menu = menu + "\n 2) PR131mainLlegeix";
       menu = menu + "\n 3) PR132main";
       menu = menu + "\n 4) PR133mainTreballadors";
+      menu = menu + "\n 5) PR14mainRegistreEstudiants";
       menu = menu + "\n 100) Sortir";
       System.out.println(menu);
 
@@ -28,6 +29,7 @@ public class Main {
           case 2: PR131mainLlegeix.main(args); break;
           case 3: PR132main.main(args); break;
           case 4: PR133mainTreballadors.main(args); break;
+          case 5: PR14mainRegistreEstudiants.main(args); break;
           case 100: running = false; break;
           default: break;
         }
