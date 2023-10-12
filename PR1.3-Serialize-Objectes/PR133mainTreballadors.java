@@ -15,7 +15,8 @@ public class PR133mainTreballadors {
         int numlinea, posOpt, opt2;
         
         try {
-            System.out.print("Id de la persona: ");
+            System.out.println(showInfo(csv));
+            System.out.print("\n\nId de la persona: ");
             opt2 = Integer.parseInt(sc.nextLine());
             System.out.print("Que dada vols modificar?: ");
             opt = sc.nextLine();
@@ -53,6 +54,38 @@ public class PR133mainTreballadors {
             if (num.equals(id)) {
                 return ar.indexOf(elemento);
             }
+        }
+        return res;
+    }
+
+    public static String showInfo(List<String> file) {
+        String res = "";
+        char sep = '-';
+        int veces = 1;
+        res += String.valueOf(sep).repeat(91);
+        String v = "";
+        for (String elemento : file) {
+            res += "\n| ";
+            for (int o = 0; o < elemento.length(); o++){
+                char caracter = elemento.charAt(o);
+                if (caracter == ';' || caracter == ',' || (o == elemento.length()-1)) {
+                    if (o == elemento.length()-1) {
+                        v += caracter;
+                    }
+                    if (veces == 1) {
+                        v = v.toUpperCase();
+                    }
+                    res += String.format("%-"+15+"s", v);
+                    res += " | ";
+                    v = "";
+                } else {
+                    v += caracter;
+                }
+            }
+            veces +=1;
+            v = "";
+            res += "\n";
+            res += String.valueOf(sep).repeat(91);
         }
         return res;
     }
