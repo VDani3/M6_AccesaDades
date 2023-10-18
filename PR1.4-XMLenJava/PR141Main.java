@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.TransformException;
@@ -23,6 +24,7 @@ public class PR141Main {
     
     public static void main(String[] args) {
         DocumentBuilderFactory dbf =  DocumentBuilderFactory.newInstance();
+        Scanner sc = new Scanner(System.in);
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.newDocument();
@@ -78,6 +80,9 @@ public class PR141Main {
             elmDisp.appendChild(disp);
             elmLlibre.appendChild(elmDisp);
             write("./biblioteca.xml", doc);
+            System.out.println("Document 'biblioteca.xml' creat correctament");
+            sc.nextLine();
+
         } catch (ParserConfigurationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cursos>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><cursos>
    <curs id="AMS2">
        <tutor>LARA,Francesc</tutor>
        <alumnes>
